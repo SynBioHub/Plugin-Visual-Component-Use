@@ -1,6 +1,6 @@
 import json
 import requests
-from pandas.io.json import json_normalize
+from pandas import json_normalize
 
 def input_data(uri, instance):
     """
@@ -10,7 +10,7 @@ def input_data(uri, instance):
     -------
     import json
     import requests
-    from pandas.io.json import json_normalize
+    from pandas import json_normalize
     Input_Query.txt
     
     Parameters

@@ -1,7 +1,7 @@
 import requests
 import json
 import pandas as pd
-from pandas.io.json import json_normalize
+from pandas import json_normalize
 from uri_to_url import uri_to_url
 
 def sankey(url, uri, title, instance):
@@ -16,7 +16,7 @@ def sankey(url, uri, title, instance):
     import requests
     import json
     import pandas as pd
-    from pandas.io.json import json_normalize
+    from pandas import json_normalize
     Preceding_Percent_Query.txt
     
     

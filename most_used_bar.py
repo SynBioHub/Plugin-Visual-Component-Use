@@ -1,7 +1,7 @@
 import pandas as pd
 import requests
 import json
-from pandas.io.json import json_normalize
+from pandas import json_normalize
 from uri_to_url import uri_to_url
 
 def most_used_bar(uri, instance, display_id, title, role, count):

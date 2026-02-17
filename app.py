@@ -12,6 +12,7 @@ from most_used_by_type_bar import most_used_by_type_bar
 from toggle_bars import toggle_bars
 
 import tempfile, os, shutil
+import traceback
 
 app = Flask(__name__)
 
@@ -27,7 +28,7 @@ def Sankey_Evaluate():
     
     ########## REPLACE THIS SECTION WITH OWN RUN CODE #################
     #uses rdf types
-    accepted_types = {'Component'}
+    accepted_types = {'Component', 'ComponentDefinition'}
     
     acceptable = rdf_type in accepted_types
     
@@ -63,13 +64,11 @@ def Sankey_Run():
         #retrieve information about the poi
         self_df, display_id, title, role, count = input_data(top_level_url, instance_url)
 
-        #print("Find role name")
         #Find the role name in the ontology of the part of interest
         role_link = find_role_name(role, plural = False)
 
         #create data for the sankey diagram and format it correctly
         df_sankey = sankey(url, top_level_url, title, instance_url)
-
         sankey_title = "Parts Co-Located with "+ title + " (a "+role_link+")"
         
         #create a temporary directory
@@ -90,7 +89,8 @@ def Sankey_Run():
        
         return result 
     except Exception as e:
-        print(e)
+        print(e, flush=True)
+        print(traceback.format_exc(), flush=True)
         abort(400)
 
 #flask run --host=0.0.0.0
@@ -106,7 +106,7 @@ def Bar_Evaluate():
     
     ########## REPLACE THIS SECTION WITH OWN RUN CODE #################
     #uses rdf types
-    accepted_types = {'Component'}
+    accepted_types = {'Component', 'ComponentDefinition'}
     
     acceptable = rdf_type in accepted_types
     
@@ -180,5 +180,6 @@ def Bar_Run():
 
         return toggle_display
     except Exception as e:
-        print(e)
+        print(e, flush=True)
+        print(traceback.format_exc(), flush=True)
         abort(400)
