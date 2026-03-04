@@ -1,8 +1,8 @@
 import json
 import requests
-from pandas.io.json import json_normalize
+from pandas import json_normalize
 
-def input_data(uri, instance):
+def input_data(uri, instance, token = None):
     """
     Finds information about an SBOL part based on its uri
     
@@ -10,7 +10,7 @@ def input_data(uri, instance):
     -------
     import json
     import requests
-    from pandas.io.json import json_normalize
+    from pandas import json_normalize
     Input_Query.txt
     
     Parameters
@@ -55,7 +55,10 @@ def input_data(uri, instance):
         
     status = 200
     
-    req = requests.get(instance)
+    headers = {}
+    if token is not None:
+        headers['X-authorization'] = token
+    req = requests.get(instance, headers=headers)
     if req.status_code != 200: #if synbiohub is offline return an error
         status = 424
     else:
@@ -66,7 +69,7 @@ def input_data(uri, instance):
         sparqlquery = sparqlquery.replace('https://synbiohub.org/public/igem/BBa_B0012/1',uri)
 
         #accept repsonses
-        r = requests.post(instance+"sparql", data = {"query":sparqlquery}, headers = {"Accept":"application/json"})
+        r = requests.post(instance+"sparql", data = {"query":sparqlquery}, headers = {"Accept":"application/json", "X-authorization": token} if token is not None else {"Accept":"application/json"})
         
         #format responses
         d = json.loads(r.text)

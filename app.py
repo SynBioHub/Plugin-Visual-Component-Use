@@ -12,6 +12,7 @@ from most_used_by_type_bar import most_used_by_type_bar
 from toggle_bars import toggle_bars
 
 import tempfile, os, shutil
+import traceback
 
 app = Flask(__name__)
 
@@ -27,7 +28,7 @@ def Sankey_Evaluate():
     
     ########## REPLACE THIS SECTION WITH OWN RUN CODE #################
     #uses rdf types
-    accepted_types = {'Component'}
+    accepted_types = {'Component', 'ComponentDefinition'}
     
     acceptable = rdf_type in accepted_types
     
@@ -51,6 +52,7 @@ def Sankey_Run():
     size = data['size']
     rdf_type = data['type']
     shallow_sbol = data['shallow_sbol']
+    token = data['token']
     
     url = complete_sbol.replace('/sbol','')
     
@@ -61,15 +63,13 @@ def Sankey_Run():
         #top_level_url = 'https://dev.synbiohub.org/public/igem/BBa_B0012/1'
 
         #retrieve information about the poi
-        self_df, display_id, title, role, count = input_data(top_level_url, instance_url)
+        self_df, display_id, title, role, count = input_data(top_level_url, instance_url, token)
 
-        #print("Find role name")
         #Find the role name in the ontology of the part of interest
         role_link = find_role_name(role, plural = False)
 
         #create data for the sankey diagram and format it correctly
-        df_sankey = sankey(url, top_level_url, title, instance_url)
-
+        df_sankey = sankey(url, top_level_url, title, instance_url, token)
         sankey_title = "Parts Co-Located with "+ title + " (a "+role_link+")"
         
         #create a temporary directory
@@ -90,7 +90,8 @@ def Sankey_Run():
        
         return result 
     except Exception as e:
-        print(e)
+        print(e, flush=True)
+        print(traceback.format_exc(), flush=True)
         abort(400)
 
 #flask run --host=0.0.0.0
@@ -106,7 +107,7 @@ def Bar_Evaluate():
     
     ########## REPLACE THIS SECTION WITH OWN RUN CODE #################
     #uses rdf types
-    accepted_types = {'Component'}
+    accepted_types = {'Component', 'ComponentDefinition'}
     
     acceptable = rdf_type in accepted_types
     
@@ -130,17 +131,18 @@ def Bar_Run():
     size = data['size']
     rdf_type = data['type']
     shallow_sbol = data['shallow_sbol']
+    token = data['token']
     
     url = complete_sbol.replace('/sbol','')
 
     try:
 
         #create input data
-        self_df, display_id, title, role, count = input_data(top_level_url, instance_url)
+        self_df, display_id, title, role, count = input_data(top_level_url, instance_url, token)
         
         #create and format data for the most_used barchart
         bar_df = most_used_bar(top_level_url, instance_url, display_id, title, role, 
-                        count)
+                        count, token)
         
         #graph title for most used barchart
         graph_title = f'Top Ten Parts by Number of Uses Compared to <a href="{url}" target="_blank">{title}</a>'
@@ -161,7 +163,7 @@ def Bar_Run():
         role_link = find_role_name(role, plural = False)
 
         bar_df = most_used_by_type_bar(top_level_url,instance_url, display_id, title, 
-                      role, count)
+                      role, count, token)
         
         #graph title for most used barchart
         graph_title = f'Top Ten {role_link} by Number of Uses Compared to <a href="{url}" target="_blank">{title}</a>'
@@ -180,5 +182,6 @@ def Bar_Run():
 
         return toggle_display
     except Exception as e:
-        print(e)
+        print(e, flush=True)
+        print(traceback.format_exc(), flush=True)
         abort(400)
