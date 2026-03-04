@@ -4,7 +4,7 @@ import pandas as pd
 from pandas import json_normalize
 from uri_to_url import uri_to_url
 
-def sankey(url, uri, title, instance):
+def sankey(url, uri, title, instance, token):
     """
     This function creates the table needed to make the sankey diagram
     to create the sankey diagram two linked tables are needed
@@ -58,7 +58,7 @@ def sankey(url, uri, title, instance):
     
     #substitute in the name of the particular part
     sparqlquery = sparqlquery.replace('https://synbiohub.org/public/igem/BBa_E0040/1',uri)
-    r = requests.post(instance+"sparql", data = {"query":sparqlquery}, headers = {"Accept":"application/json"})
+    r = requests.post(instance+"sparql", data = {"query":sparqlquery}, headers = {"Accept":"application/json", "X-authorization": token} if token is not None else {"Accept":"application/json"})
     
     #reformat query results
     d = json.loads(r.text)

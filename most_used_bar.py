@@ -4,7 +4,7 @@ import json
 from pandas import json_normalize
 from uri_to_url import uri_to_url
 
-def most_used_bar(uri, instance, display_id, title, role, count):
+def most_used_bar(uri, instance, display_id, title, role, count, token):
     """
     Uses a sparql query to obtain information about the most used parts and format the data in such a way
     that a graph can be made comparing the poi (part of interest) to the most used parts
@@ -76,9 +76,10 @@ def most_used_bar(uri, instance, display_id, title, role, count):
     fl = open("Most_Used_Query.txt", "r")
     sparqlquery = fl.read()
     
+
     #send the query
     r = requests.post(instance+"sparql", data = {"query":sparqlquery}, 
-                      headers = {"Accept":"application/json"})
+                      headers = {"Accept":"application/json", "X-authorization": token} if token is not None else {"Accept":"application/json"})
     
     #format query results
     d = json.loads(r.text)
